@@ -39,6 +39,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
 
@@ -47,8 +48,9 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-
+void display7SEG(int num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -84,8 +86,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -136,6 +139,51 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 7999;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 9;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -174,7 +222,109 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int seven_segment_counter = 0;
+int seven_segment_EN_state = 0;
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+	seven_segment_counter--;
+	if (seven_segment_counter <= 0){
+		seven_segment_counter = 50;
+
+		switch (seven_segment_EN_state){
+		case 0:
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+			display7SEG(1);
+
+			seven_segment_EN_state = 1;
+			break;
+		case 1:
+			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+			display7SEG(2);
+
+			seven_segment_EN_state = 0;
+			break;
+		}
+	}
+}
+
+void display7SEG(int num)
+{
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_All, SET);
+
+	switch(num){
+	case 0:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		break;
+	case 1:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		break;
+	case 2:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 3:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 4:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 5:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 6:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 7:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		break;
+	case 8:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	case 9:
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, RESET);
+		break;
+	}
+}
 /* USER CODE END 4 */
 
 /**
