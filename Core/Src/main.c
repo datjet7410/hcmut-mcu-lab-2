@@ -226,18 +226,18 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int seven_segment_counter = 0;
-int seven_segment_EN_state = 0;
-int LED_counter = 50;
-
 const int MAX_LED = 4;
 int index_led = 0;
 int led_buffer[4] = {1, 2, 3, 4};
 
+int seven_segment_counter = 100 / MAX_LED;
+int seven_segment_EN_state = 0;
+int LED_counter = 50;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	seven_segment_counter--;
 	if (seven_segment_counter <= 0){
-		seven_segment_counter = 50;
+		seven_segment_counter = 100 / MAX_LED;
 
 		if (index_led >= MAX_LED) index_led = 0;
 		update7SEG(index_led++);
