@@ -80,6 +80,13 @@ void setTimerClock ( int duration ) {
 	timer_clock_flag = 0;
 }
 
+int timer_7SEG_counter = 0;
+int timer_7SEG_flag = 0;
+void setTimer7SEG ( int duration ) {
+	timer_7SEG_counter = duration / TIMER_CYCLE ;
+	timer_7SEG_flag = 0;
+}
+
 void timer_run () {
 	if( timer0_counter > 0) {
 		timer0_counter --;
@@ -94,6 +101,11 @@ void timer_run () {
 	if( timer_clock_counter > 0) {
 		timer_clock_counter --;
 		if( timer_clock_counter == 0) timer_clock_flag = 1;
+	}
+
+	if( timer_7SEG_counter > 0) {
+		timer_7SEG_counter --;
+		if( timer_7SEG_counter == 0) timer_7SEG_flag = 1;
 	}
 }
 
@@ -135,16 +147,20 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int hour = 15 , minute = 8 , second = 50;
-
   setTimer0(1000);
   setTimerDOT(500);
 
+  int hour = 15 , minute = 8 , second = 50;
   updateClockBuffer(hour, minute);
   setTimerClock(1000);
+
+  const int MAX_LED = 4;
+  int index_led = 0;
+  setTimer7SEG(1000 / MAX_LED);
+
   while (1)
   {
-		if( timer0_flag == 1) {
+		if (timer0_flag == 1) {
 			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 			setTimer0(2000);
 		}
@@ -168,6 +184,11 @@ int main(void)
 			updateClockBuffer(hour, minute);
 
 			setTimerClock(1000);
+		}
+		if (timer_7SEG_flag == 1) {
+			if (index_led >= MAX_LED) index_led = 0;
+			update7SEG(index_led++);
+			setTimer7SEG(1000 / MAX_LED);
 		}
 
     /* USER CODE END WHILE */
@@ -300,24 +321,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-const int MAX_LED = 4;
-int index_led = 0;
-int led_buffer[4] = {1, 2, 3, 4};
-
-int seven_segment_counter = 100 / MAX_LED;
-int seven_segment_EN_state = 0;
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-	seven_segment_counter--;
-	if (seven_segment_counter <= 0){
-		seven_segment_counter = 100 / MAX_LED;
-
-		if (index_led >= MAX_LED) index_led = 0;
-		update7SEG(index_led++);
-	}
 	timer_run();
 }
 
+int led_buffer[4] = {8, 8, 8, 8};
 void updateClockBuffer(int hour, int minute){
 	led_buffer[0] = hour / 10;
 	led_buffer[1] = hour % 10;
