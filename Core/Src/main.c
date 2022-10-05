@@ -53,7 +53,7 @@ static void MX_TIM2_Init(void);
 void display7SEG(int num);
 void update7SEG(int index);
 void updateClockBuffer(int hour, int minute);
-void updateLEDMatrix(int index);
+void updateLEDMatrix(int index, int animation_slide);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -174,6 +174,7 @@ int main(void)
   const int MAX_LED_MATRIX = 8;
   int index_led_matrix = 0;
   setTimerLEDMatrix(500 / MAX_LED_MATRIX);
+  int animation_slide = 0;
 
   while (1)
   {
@@ -208,8 +209,14 @@ int main(void)
 			setTimer7SEG(1000 / MAX_LED);
 		}
 		if (timer_led_matrix_flag == 1){
-			if (index_led_matrix >= MAX_LED_MATRIX) index_led_matrix = 0;
-			updateLEDMatrix(index_led_matrix++);
+			if (index_led_matrix >= MAX_LED_MATRIX){
+				index_led_matrix = 0;
+				animation_slide++;
+			}
+			if (animation_slide >= MAX_LED_MATRIX) animation_slide = -MAX_LED_MATRIX;
+
+			updateLEDMatrix(index_led_matrix, animation_slide);
+			index_led_matrix++;
 			setTimerLEDMatrix(500 / MAX_LED_MATRIX);
 		}
 
@@ -504,7 +511,7 @@ uint32_t matrix_buffer[8] = {
 		ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin|ROW7_Pin,
 		ROW4_Pin|ROW5_Pin|ROW6_Pin|ROW7_Pin
 };
-void updateLEDMatrix (int index) {
+void updateLEDMatrix (int index, int animation_slide) {
 	HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, RESET);
 	HAL_GPIO_WritePin(ROW1_GPIO_Port, ROW1_Pin, RESET);
 	HAL_GPIO_WritePin(ROW2_GPIO_Port, ROW2_Pin, RESET);
@@ -523,7 +530,7 @@ void updateLEDMatrix (int index) {
 	HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, RESET);
 	HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, RESET);
 
-	switch(index){
+	switch(index - animation_slide){
 	case 0:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, SET);
 		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], SET);
