@@ -138,7 +138,7 @@ int main(void)
   int hour = 15 , minute = 8 , second = 50;
 
   setTimer0(1000);
-  setTimerDOT(500);
+  setTimerDOT(1000);
 
   updateClockBuffer(hour, minute);
   setTimerClock(1000);
@@ -150,7 +150,7 @@ int main(void)
 		}
 		if (timer_DOT_flag == 1) {
 			HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-			setTimerDOT(500);
+			setTimerDOT(1000);
 		}
 		if (timer_clock_flag == 1) {
 			second ++;
