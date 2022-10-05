@@ -267,7 +267,7 @@ int led_buffer[4] = {1, 2, 3, 4};
 
 int seven_segment_counter = 100 / MAX_LED;
 int seven_segment_EN_state = 0;
-int LED_counter = 50;
+int LED_counter = 100;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	seven_segment_counter--;
@@ -280,7 +280,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
 	LED_counter--;
 	if (LED_counter <= 0){
-		LED_counter = 50;
+		LED_counter = 100;
 		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
 	}
 	timer_run();
