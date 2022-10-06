@@ -504,7 +504,7 @@ uint32_t matrix_buffer[8] = {
 		ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin|ROW7_Pin,
 		ROW4_Pin|ROW5_Pin|ROW6_Pin|ROW7_Pin
 };
-void updateLEDMatrix (int index, int animation_slide) {
+void updateLEDMatrix (int index) {
 	HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, SET);
 	HAL_GPIO_WritePin(ROW1_GPIO_Port, ROW1_Pin, SET);
 	HAL_GPIO_WritePin(ROW2_GPIO_Port, ROW2_Pin, SET);
