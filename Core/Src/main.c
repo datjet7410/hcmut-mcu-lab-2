@@ -228,7 +228,7 @@ int seven_segment_EN_state = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	seven_segment_counter--;
 	if (seven_segment_counter <= 0){
-		seven_segment_counter = 100;
+		seven_segment_counter = 50;
 
 		switch (seven_segment_EN_state){
 		case 0:
