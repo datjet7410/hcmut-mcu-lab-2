@@ -526,47 +526,33 @@ void updateLEDMatrix (int index) {
 	switch(index){
 	case 0:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 1:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM1_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 2:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM2_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 3:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM3_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 4:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM4_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 5:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM5_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 6:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM6_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 7:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM7_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	default:
 		break;
 	}
+
+	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
 }
 /* USER CODE END 4 */
 
