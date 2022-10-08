@@ -213,7 +213,8 @@ int main(void)
 				index_led_matrix = 0;
 				animation_slide++;
 			}
-			if (animation_slide >= MAX_LED_MATRIX) animation_slide = -MAX_LED_MATRIX;
+			if (animation_slide >= MAX_LED_MATRIX)
+				animation_slide = -MAX_LED_MATRIX;
 
 			updateLEDMatrix(index_led_matrix, animation_slide);
 			index_led_matrix++;
@@ -512,6 +513,10 @@ uint32_t matrix_buffer[8] = {
 		ROW4_Pin|ROW5_Pin|ROW6_Pin|ROW7_Pin
 };
 void updateLEDMatrix (int index, int animation_slide) {
+	/*
+	 * Display letter A
+	 * animation_slide: number of columns letter A moves to left
+	 */
 	HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, SET);
 	HAL_GPIO_WritePin(ROW1_GPIO_Port, ROW1_Pin, SET);
 	HAL_GPIO_WritePin(ROW2_GPIO_Port, ROW2_Pin, SET);
@@ -530,50 +535,36 @@ void updateLEDMatrix (int index, int animation_slide) {
 	HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, SET);
 	HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, SET);
 
-	switch(index - animation_slide){
+	switch(index - animation_slide){ // move to left animation_slide cols
 	case 0:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 1:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM1_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 2:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM2_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 3:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM3_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 4:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM4_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 5:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM5_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 6:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM6_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	case 7:
 		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM7_Pin, RESET);
-		HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
-
 		break;
 	default:
 		break;
 	}
+
+	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], RESET);
 }
 /* USER CODE END 4 */
 
